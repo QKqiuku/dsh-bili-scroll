@@ -128,6 +128,7 @@ dsh plugin --profile web add github:c1overzz/dsh-bili-scroll
 - **看封面 / 看画面帧需要宿主支持图片**：宿主得提供 `attachments`（存图）和 `llm`（查模型能不能看图）。
   缺任何一个就**退化成文字说明**（返回里 `image_attached: false` + `image_skip_reason`），
   其余功能照常 —— 所以这两个服务不在插件的 `inject` 里。
+- `bili_frames` 默认按**字幕节点 + 时间覆盖**选帧，并自动跳过黑帧/几乎重复的帧；`frameMax` 控制上限（0=全部）。
 - ⭐ **值班章程（`prompts/duty.md`）升级的规矩**：插件记着「上次铺的是哪一版」（`charter.sha256`）——
   你**没改过**就跟着插件自动升级；**改过**就保留你那份、把新版另存成 `duty.md.new`（日志里会说一句），自己合一下。
   ⚠️ **从 0.1.5 及以前升上来的第一次没有账本可比** ⇒ 保守地当成「你改过」：新版落成 `duty.md.new`；

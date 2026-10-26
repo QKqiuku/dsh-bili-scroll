@@ -675,11 +675,12 @@ function reportMeta() {
     name: 'bili_frames',
     description: '看视频里的画面（从 B 站自带的故事板裁 1–9999 帧，每帧 480×270；上限由设置 frameMax 决定，0=全部）。\n'
       + '想知道"这条视频到底拍了什么"就用它 —— 字幕告诉你说什么，画面告诉你拍的是什么。\n'
-      + '默认按时长均匀取 3 帧；想盯某个时刻（比如字幕里提到的那段）就传 at。',
+      + '默认按字幕节点 + 时间覆盖取 3 帧，并自动跳过黑帧/几乎重复的帧；想盯某个时刻（比如字幕里提到的那段）就传 at。',
     parameters: {
       bvid: { type: 'string', description: 'BV号' },
       num: { type: 'number', description: '取几帧，默认 3；受 frameMax 限制，0=全部由 frameMax=0 决定' },
       at: { type: 'array', items: { type: 'number' }, description: '指定时间点（秒）列表；传了就以它为准，忽略 num' },
+      smart: { type: 'boolean', description: '默认 true；false = 退回旧版均分，不按字幕/黑帧做智能选帧' },
     },
     output: imageOutput,
     async execute(args, exec) {
@@ -692,6 +693,7 @@ function reportMeta() {
         bvid: String(args.bvid ?? ''),
         num: Math.max(1, Math.min(Number(args.num) || 3, frameMax)),
         ...(at && at.length ? { at } : {}),
+        smart: args.smart !== false,
       }, { signal: exec?.signal })
       const meta = json && typeof json === 'object' ? json : { raw: json }
       if (!meta.ok) return meta
