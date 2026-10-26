@@ -1702,7 +1702,8 @@ async def bili_cover(bvid: str) -> list:
 # Video.get_video_snapshot() 有封装，但 pvideo 默认 True 会走老接口，必须传 False。
 # 裁切用 Pillow（requirements 里的 qrcode[pil] 已经带进来）。
 
-_FRAME_MAX = 6
+_FRAME_RAW = int(os.environ.get("BILI_FRAME_MAX", "6") or 6)
+_FRAME_MAX = 10**9 if _FRAME_RAW <= 0 else max(1, min(_FRAME_RAW, 9999))
 _TILE_W_DEFAULT = 480
 _TILE_H_DEFAULT = 270
 
@@ -1786,7 +1787,7 @@ async def bili_frames(bvid: str, num: int = 3, at: list | None = None) -> list:
 
     Args:
         bvid: 视频BV号，如"BV1uNk1YxEJQ"
-        num: 取几帧，1-6，默认 3
+        num: 取几帧，默认 3；受 BILI_FRAME_MAX 限制（0=全部）
         at: 指定时间点（秒）的列表；传了就以它为准，忽略 num
 
     Returns:
